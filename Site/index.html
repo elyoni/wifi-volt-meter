@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<title>Wifi Voltmeter</title>
+	<script src="canvasjs.min.js"></script>
+	<!--<script src="app.js"></script>-->
+	<script src="myChart.js"></script>
+</head>
+<body>
+	<div>
+		<h1>Wifi Voltmeter</h1>
+
+		<div id="status">Connecting...</div>
+		
+		<form action="#" method="post">
+            <input type="checkbox" id="A0_checkbox"> A0:<output name="A0" id="A0">0</output>
+            <br>
+            <input type="checkbox" id="A1_checkbox"> A1:<output name="A1" id="A1">0</output>
+            <br>
+            <input type="checkbox" id="A2_checkbox"> A2:<output name="A2" id="A2">0</output>
+		</form>
+		<ul id="messages"></ul>		
+	</div>
+    <div id="chartAnalog" style="height:400px;width: 100%"></div> 
+</body>
+</html>
