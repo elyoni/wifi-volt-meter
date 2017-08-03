@@ -1,0 +1,7 @@
+canvas {
+  /*-moz-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;*/
+    display: block;
+    margin: 0 auto;
+}

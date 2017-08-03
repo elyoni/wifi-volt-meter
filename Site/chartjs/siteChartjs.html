@@ -1,0 +1,26 @@
+<!doctype html>
+<html>
+
+<head>
+    <title>Wifi Volt Meter</title>
+    <script src='https://npmcdn.com/chart.js@latest/dist/Chart.bundle.min.js'></script>
+    <script src='https://npmcdn.com/Chart.Zoom.js@latest/Chart.Zoom.min.js'></script>
+
+    <link rel="stylesheet" href="./style.css" type="text/css" media="screen" charset="utf-8">
+    <h2 align="center"> Yoni's Wifi Volt Meter </h2>
+</head>
+
+<body>
+    <br>
+    <div style="width:100%;" >
+      <canvas  id="myChart" width="700" height="200"></canvas>
+    </div>
+    <br>
+    IP of the chip: <input type="text" name="ip">
+
+
+    <button type="button" id="inTxtConnectToWebSocket" onclick="connectToWebSocket()">Connect</button> <br>
+    <button type="button" id="zoomInOut" onclick="zoomInOut()">zoom</button> 
+    <!--<button type="button" id="updateButton" onclick="updateChart()">Update</button> -->
+    <script src="./main.js"></script>
+</html>
