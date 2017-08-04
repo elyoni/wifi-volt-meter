@@ -8,7 +8,7 @@ var counter = 0;
 var updateChartChooser = 0;
 var chartMaxLength = 1000;
 var sampleBuffer = [1.1];
-var sampleBufferSize = 50;
+var sampleBufferSize = 500;
 var sampleCounter = 0;
 for (i = 0 ; i < chartMaxLength ; i++){
   // Set the lables 
@@ -44,7 +44,7 @@ function updateChart(newValue){
       line2[counter] = newValue[i];//Math.random() * 10;
     }
     counter += 1;
-    if (counter == chartMaxLength) {
+    if (counter == chartMaxLength-1) {
       counter = 0;
       updateChartChooser = (updateChartChooser+1) % 2;
     }
@@ -56,32 +56,34 @@ function updateChart(newValue){
     ],
   });
 }  
-
+  /*
 setInterval(function() {
   var newData = []
   for (i=0 ; i < sampleBufferSize+10; i++){
    sampleBufferHandler(parseFloat(Math.random() * 10));
   }
-}, 100);
+}, 1);
+setTimeout(function() {
+  //Run one time
+  writeToScreen("yoni");
+}, 1000);
+*/
 
 function writeToScreen(message){
   messageField.innerHTML = message;
 }
-setTimeout(function() {
-  writeToScreen("yoni");
-}, 1000);
 
 function webSocketConnect(url){
   var socket = new WebSocket('ws://' + url + ':81');
   //var socket = new WebSocket('ws://192.168.43.150:81');
   socket.onopen     = function(evt){ onOpen(evt); };
   socket.onclose    = function(evt){ onClose(evt); };
-  //socket.onmessage  = function(evt){ onMessage(evt); };
+  socket.onmessage  = function(evt){ onMessage(evt); };
   socket.onerror    = function(evt){ onError(evt); };
 }
 
 function onOpen(evt){
-  writeToScreen("CONNECTED");
+  writeToScreen("Connect To ESP8266 vi Websocket");
 }
 
 function onClose(evt){
@@ -90,7 +92,8 @@ function onClose(evt){
 
 function onMessage(evt){
   //writeToScreen(evt.data);
-  updateChart(parseFloat(evt.data));
+  //updateChart(parseFloat(evt.data));
+  sampleBufferHandler(parseFloat(evt.data));
   //websocket.close();
 }
 
@@ -101,16 +104,21 @@ function onError(evt){
 
 function addToBuffer(newSample){
   sampleBuffer.push(newSample);
+  //console.log(sampleBuffer);
+  //sampleBuffer[sampleCounter] = newSample;
   sampleCounter++;
 }
 function sampleBufferHandler(newSample){
   if (sampleCounter < (sampleBufferSize-1)){
     addToBuffer(newSample);  
+    //console.log(sampleBuffer);
   }else{ // sampleCounter == sampleBufferHandler-1
     updateChart(sampleBuffer);  // Print the chart
-    sampleBuffer = [];          // Clear the buffer
+    sampleBuffer = [];//tempList;          // Clear the buffer
+    sampleBuffer.push(newSample);
+    //console.log(sampleBuffer);
     sampleCounter = 0;          // Reset The buffer counter
-    addToBuffer(newSample);     // Add the new sample 
+    //addToBuffer(newSample);     // Add the new sample 
   }
 }
 //connectToWebSocket.onclick = function(c);
