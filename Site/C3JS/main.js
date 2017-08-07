@@ -94,8 +94,9 @@ function onClose(evt){
 function onMessage(evt){
   //writeToScreen(evt.data);
   //updateChart(parseFloat(evt.data));
-  parseCharArr(evt.data);
-  sampleBufferHandler(parseFloat(evt.data));
+  writeToScreen(evt.data.charCodeAt(0));
+  //  parseCharArr(evt.data);
+  //sampleBufferHandler(parseFloat(evt.data));
   //websocket.close();
 }
 
@@ -105,7 +106,7 @@ function onError(evt){
 }
 
 function parseCharArr(arr){
-  console.log(258*arr[i]);
+  console.log(256*arr[0]);
 }
 
 function addToBuffer(newSample){

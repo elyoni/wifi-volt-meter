@@ -67,7 +67,7 @@ void setup() {
   WiFi.begin(ssid,password);
   Serial.begin(115200);
   Serial.setTimeout(0.05);
-  Serial.println("hello world");
+  Serial.println("Ver01");
   while(WiFi.status() != WL_CONNECTED){
     delay(500);
     Serial.print(".");
@@ -79,8 +79,9 @@ void setup() {
 
 void loop() {
   webSocket.loop();
-  char* arr = decimalToArrayChar(10,4);
-  Serial.println(arr);
-  String textToSend = String(arr);
+  //char* arr = decimalToArrayChar(10,4);
+  char A = 243;
+  //Serial.println(A);
+  String textToSend = String(A);
   webSocket.sendTXT(lastConnection, textToSend);
 }
