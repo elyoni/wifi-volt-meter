@@ -1,4 +1,5 @@
 var messageField = document.getElementById('message');
+var debug = document.getElementById('debug');
 webSocketConnect("192.168.1.183");
 //------------- Graph ------------------------
 var line1 = [0];
@@ -93,6 +94,7 @@ function onClose(evt){
 function onMessage(evt){
   //writeToScreen(evt.data);
   //updateChart(parseFloat(evt.data));
+  parseCharArr(evt.data);
   sampleBufferHandler(parseFloat(evt.data));
   //websocket.close();
 }
@@ -100,6 +102,10 @@ function onMessage(evt){
 function onError(evt){
   writeToScreen(evt.data);
   //writeToScreen('<span style="color: red;">ERROR:</span> ' + evt.data);
+}
+
+function parseCharArr(arr){
+  console.log(258*arr[i]);
 }
 
 function addToBuffer(newSample){

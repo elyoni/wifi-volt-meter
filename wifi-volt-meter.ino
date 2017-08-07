@@ -13,6 +13,23 @@ uint8_t lastConnection;
 //char *readChar;
 char readStringa[] = "1";
 
+char* decimalToArrayChar(int value, int bytesNumber){
+  //The Maximum Size is 4 Byte
+  static char array[4];
+  //int integerValue = value;
+  for(int i = 0 ; i < bytesNumber && value != 0 ; i++){
+    array[i] = value % 256;
+    Serial.print(array[i]);
+    value = value / 256;
+  }
+  return array;
+}
+
+void printArray(char* arr,int bytesNumber){
+  for(int i=0 ; i<bytesNumber ; i++){
+  }
+}
+
 void webSocketEvent(uint8_t num, WStype_t type, uint8_t * payload, size_t lenght) {
   switch(type) {
     case WStype_DISCONNECTED:
@@ -62,6 +79,8 @@ void setup() {
 
 void loop() {
   webSocket.loop();
-  String textToSend = String(millis());
+  char* arr = decimalToArrayChar(10,4);
+  Serial.println(arr);
+  String textToSend = String(arr);
   webSocket.sendTXT(lastConnection, textToSend);
 }
