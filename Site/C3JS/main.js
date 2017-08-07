@@ -73,6 +73,10 @@ setTimeout(function() {
 function writeToScreen(message){
   messageField.innerHTML = message;
 }
+function writeToDebug(message){
+  debug.innerHTML += parseCharArr(message);
+  //message.charCodeAt(0) + " " + message + "<br />";
+}
 
 function webSocketConnect(url){
   var socket = new WebSocket('ws://' + url + ':81');
@@ -92,9 +96,14 @@ function onClose(evt){
 }
 
 function onMessage(evt){
+  msg = evt.data; 
   //writeToScreen(evt.data);
   //updateChart(parseFloat(evt.data));
-  writeToScreen(evt.data.charCodeAt(0));
+  if (msg == "Connected"){
+    writeToScreen(msg);
+  }else{
+    writeToDebug(evt.data);
+  }
   //  parseCharArr(evt.data);
   //sampleBufferHandler(parseFloat(evt.data));
   //websocket.close();
@@ -106,7 +115,12 @@ function onError(evt){
 }
 
 function parseCharArr(arr){
-  console.log(256*arr[0]);
+  var number = 0; 
+  for(i = 0 ; i < arr.length ; i++){
+    //console.log(String.fromCharCode(arr.charCodeAt(i)-1));
+    number += ((Math.pow(127,i))*(arr.charCodeAt(i)-1));
+  }
+  return number;
 }
 
 function addToBuffer(newSample){
