@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+table, td {
+  border: 1px solid black;
+}
+    </style>
+  </head>
+  <body>
+
+    <form action="/newAccessPoint">
+      Access Point:<input type="text" name="firstname" value="Mickey">
+      <br>
+      Password:<input type="text" name="lastname" value="Mouse">
+      <br><br>
+      <input type="submit" value="Submit">
+    </form> 
+    <button onclick="add()">add</button>
+    <button onclick="remo()">remove</button>
+    <br><br>
+    <button onclick="change()">change</button>
+    <button onclick="addToTable(3,2)">addToTable</button>
+    <br>
+    <table id="dmm" cellpadding="10">
+      <tr id="dmmRow">
+      </tr>
+    </table>
+
+    <script>
+var counter = 0;
+function add() {
+  var x = document.createElement("INPUT");
+  x.setAttribute("type", "text");
+  x.setAttribute("value", "Hello World!");
+  x.setAttribute("id", "someInput");
+  document.body.appendChild(x);
+}
+
+function remo() {
+  // Removes an element from the document
+  var element = document.getElementById("someInput");
+  element.parentNode.removeChild(element);
+}
+
+function change() {
+  // Removes an element from the document
+  var element = document.getElementById("2A1");
+  element.setAttribute('value',"david");
+  //element.innerHTML = "Yoni";
+}
+
+function addToTable(numberOfAnalog,dmmNumber) {
+  var table = document.getElementById("dmmRow");
+  //var row = table.insertRow(table.rows.length);
+
+  var cell = table.insertCell(table.length);
+
+  for (var i=0 ; i < numberOfAnalog ; i++){
+    var text = document.createTextNode("A" + i.toString());
+    var x = document.createElement("INPUT");
+    var br = document.createElement("BR");
+    x.setAttribute('id',dmmNumber.toString() + "A" + i.toString());
+    x.setAttribute('type',"text");
+    x.setAttribute('value',"yoni");
+    x.setAttribute('readOnly',true);
+    console.log(dmmNumber.toString() + "A" + i.toString());
+    cell.appendChild(text);
+    cell.appendChild(x);
+    cell.appendChild(br);
+  }
+}
+    </script>
+  </body>
+</html>
