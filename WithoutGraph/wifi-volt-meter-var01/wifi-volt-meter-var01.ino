@@ -9,17 +9,26 @@
 
 WebSocketsServer webSocket = WebSocketsServer(81);
 
+//Don't change the flowing value
 //The data will be loaded from the EEPROM
 char ssid[32];
-char password[16];
+char password[32];
 
-const char *ver = "ver01";
+const char newDeviceSign = 42 ;
 
-const int PCF8591 = 0x48;
-byte numberOfAnalog = 4;
-
+const int maxConnectionTries = 10;
 int connectionTries = 0;
 ESP8266WebServer server(80);
+
+bool isConnected = false;
+
+//User Can change
+const int PCF8591 = 0x48; //I2C address
+const byte numberOfAnalog = 4; 
+char deviceSign = '1' ;
+
+
+
 
 /** Load WLAN credentials from EEPROM */
 void loadCredentials() {
@@ -50,7 +59,7 @@ void saveCredentials() {
 }
 
 void clearCredentials(){
-  String empty = "123123";
+  String empty = "123123"; //Enter junk data
   empty.toCharArray(ssid,32);
   empty.toCharArray(password,16);
   EEPROM.begin(512);
@@ -69,6 +78,7 @@ void webSocketEvent(uint8_t num, WStype_t type, uint8_t * payload, size_t lenght
     case WStype_DISCONNECTED:
       {
         Serial.printf("[%u] Disconnected!\n", num);
+        isConnected = false;
         break;
       }
     case WStype_CONNECTED:
@@ -76,10 +86,11 @@ void webSocketEvent(uint8_t num, WStype_t type, uint8_t * payload, size_t lenght
         IPAddress ip = webSocket.remoteIP(num);
         lastConnection = num;
         Serial.printf("[%u] Connected from %d.%d.%d.%d url: %s\n", num, ip[0], ip[1], ip[2], ip[3], payload);
-        webSocket.sendTXT(num, "Connected To ESP01");
+        //webSocket.sendTXT(num, "Connected To ESP01");
         // On new connection the esp will send his name(one letter) and the number of analog
-              
-        webSocket.sendTXT(num, "Connected To ESP01");
+        Serial.println(String(newDeviceSign) +  String(deviceSign) + String(numberOfAnalog));
+        webSocket.sendTXT(num, String(newDeviceSign) +  String(deviceSign) + String(numberOfAnalog));
+        isConnected = true;
         break;
       }
     case WStype_TEXT:
@@ -161,19 +172,19 @@ void setup() {
   //Configure The Serial Settings
   Serial.begin(115200);
   Serial.setTimeout(0.05);
-  clearCredentials();
+  //clearCredentials();
   //Configure The Wifi Settings
   loadCredentials();
   WiFi.mode(WIFI_STA);
   Serial.println(ssid);
   WiFi.begin(ssid,password);
   //Tring to connect to the wifi
-  while(WiFi.status() != WL_CONNECTED && connectionTries < 10){
+  while(WiFi.status() != WL_CONNECTED && connectionTries < maxConnectionTries){
     delay(500);
     Serial.print(".");
     connectionTries++;
   }
-  if (connectionTries == 10){
+  if (connectionTries == maxConnectionTries){
     // Could not success to connect to the wifi
     // Switching To hotspot
     Serial.println("");
@@ -203,12 +214,15 @@ void setup() {
 void loop() {
   webSocket.loop();
   //The full message form is (number Of Analog,Analog Value 0,Analog Value 1,...)
-  String textToSend = String(numberOfAnalog);
-  for (byte i=1 ; i < numberOfAnalog	; i++){
-    textToSend += String(readI2C(PCF8591,i));
-    textToSend += ",";
+  if (isConnected){
+    String textToSend = deviceSign + String(numberOfAnalog);
+    for (byte i=1 ; i < numberOfAnalog	; i++){
+      textToSend += String(readI2C(PCF8591,i));
+      textToSend += ",";
+    }
+    textToSend += String(readI2C(PCF8591,0));
+    //Serial.println(textToSend);
+    webSocket.sendTXT(lastConnection, textToSend);
+    delay(1000);
   }
-  textToSend += String(readI2C(PCF8591,0));
-  //Serial.println(textToSend);
-  webSocket.sendTXT(lastConnection, textToSend);
 }
