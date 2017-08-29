@@ -16,7 +16,7 @@ char password[32];
 
 const char newDeviceSign = 42 ;
 
-const int maxConnectionTries = 10;
+const int maxConnectionTries = 40;
 int connectionTries = 0;
 ESP8266WebServer server(80);
 
@@ -223,6 +223,6 @@ void loop() {
     textToSend += String(readI2C(PCF8591,0));
     //Serial.println(textToSend);
     webSocket.sendTXT(lastConnection, textToSend);
-    delay(1000);
+    delay(300);
   }
 }

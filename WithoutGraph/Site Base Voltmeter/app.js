@@ -88,9 +88,9 @@ window.onload = function() {
 	// Create a new WebSocket.
 	//var socket = new WebSocket('ws://echo.websocket.org');
 	//var socket1 = new WebSocket('ws://192.168.1.68:81');
-	for(var i=2 ; i < 255 ; i++){
-		webSocketConnect("192.168.1." + i.toString());
-	}
+//	for(var i=2 ; i < 255 ; i++){
+//		webSocketConnect("192.168.1." + i.toString());
+//	}
 //	webSocketConnect("192.168.1.39");
 };
 
