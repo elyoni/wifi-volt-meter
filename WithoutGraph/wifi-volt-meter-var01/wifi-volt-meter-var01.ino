@@ -40,7 +40,6 @@ class SmartWifi{
     char _password[PASSWORD_SIZE];
     int _maxNumberOfTries;
     bool _useSerial;
-    IPAddress  _ipAddress;
     ESP8266WebServer& _webServer;
     void loadCredentiasFromEEPROM(void);
     void saveCredentialsToEEPROM(void);
@@ -54,6 +53,7 @@ class SmartWifi{
     SmartWifi(bool useSerial, int eepromSize,ESP8266WebServer& webServer);
     void setMaxNumberOfConnectionTries(int numberOfTries);
     void connectToWifi();
+    IPAddress getIPAddress(void);
 
 };
 SmartWifi::SmartWifi(bool useSerial, int eepromSize, ESP8266WebServer& webServer):_useSerial(useSerial),_eepromSize(eepromSize),_webServer(webServer){
@@ -115,8 +115,8 @@ void SmartWifi::setMaxNumberOfConnectionTries(int maxNumberOfTries){
 
 
 void SmartWifi::accessPointAndPasswordForm(void){
-  char site[300];
-  snprintf(site,300,
+  char site[430];
+  snprintf(site,430,
       "<html>\
       <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\
       <body>\
@@ -134,7 +134,7 @@ void SmartWifi::accessPointAndPasswordForm(void){
   _webServer.send(200,"text/html",site);
 }
 
-void SmartWifi::connectToWifi(void){
+bool SmartWifi::connectToWifi(void){
   WiFi.mode(WIFI_STA);
   WiFi.begin(_ssid,_password);
   //Tring to connect to the wifi
@@ -161,15 +161,16 @@ void SmartWifi::connectToWifi(void){
     _webServer.on("/resetESPForm",[this](){resetESPForm();});
     _webServer.on("/resetESP", [this](){resetESPHandler();});
     _webServer.begin();
+    //The user need to reset the ESP to after he update the ssid and the password
     while(true){
-      //The user need to reset the ESP to after he update the ssid and the password
       _webServer.handleClient();
     }
   }else{
     // Every things is good, continue with the program
-    if (_useSerial){Serial.println(WiFi.localIP());}
-    _ipAddress = WiFi.localIP();
-   
+    if (_useSerial){
+      Serial.print("Device Ip Address: ");
+      Serial.println(WiFi.localIP());
+    }
    /*
    // i2c config
     Wire.begin(0,2);
@@ -191,8 +192,8 @@ void SmartWifi::resetESPForm(void){
      --- Here Come the code for saving the data into the EEPROM
    */
   saveCredentialsToEEPROM();
-  char site[500];
-  snprintf(site,500,
+  char site[260];
+  snprintf(site,260,
       "<html>\
       <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\
       <body>\
@@ -203,13 +204,16 @@ void SmartWifi::resetESPForm(void){
       </body>\
       </html>"
       );
-  Serial.println("Finish running updateAccessPoint");
   _webServer.send(200,"text/html",site);
 }
 void SmartWifi::resetESPHandler(void){
   WiFi.disconnect();
   ESP.restart();//After the first flash this command wan't work
   //Need to reset the esp to make the command work
+}
+
+IPAddress SmartWifi::getIPAddress(void){
+  return WiFi.localIP();
 }
 
 uint8_t lastConnection;
@@ -263,50 +267,14 @@ int readI2C(int addressBus,byte controlReg){
 
 void setup() {
   Serial.begin(115200);
-  SmartWifi wifiConnection(0, 4096, true, webServer);
-  wifiConnection.connectToWifi();
-  //Configure The Serial Settings
-  /*
-  Serial.begin(115200);
-  Serial.setTimeout(0.05);
-  //clearCredentials();
-  //Configure The Wifi Settings
-  loadCredentials();
-  WiFi.mode(WIFI_STA);
-  Serial.println(ssid);
-  WiFi.begin(ssid,password);
-  //Tring to connect to the wifi
-  while(WiFi.status() != WL_CONNECTED && connectionTries < maxConnectionTries){
-    delay(500);
-    Serial.print(".");
-    connectionTries++;
-  }
-  if (connectionTries == maxConnectionTries){
-    // Could not success to connect to the wifi
-    // Switching To hotspot
-    Serial.println("");
-    Serial.println("Couldn't Connect to the Wifi, changing to Access Point option");
-    WiFi.disconnect();
-    WiFi.mode(WIFI_AP);
-    WiFi.softAP("esp8266 Access Point"); //For some reasone the password wan't work
-    server.on("/", newAccessPoint);
-    server.on("/updatedAccessPoint", updateAcessPoint);
-    server.on("/resetESP", resetESP);
-    server.begin();
-    while(true){
-      //The user need to reset the ESP to after he update the ssid and the password
-      server.handleClient();
-    }
-  }else{
-    // Every things is good, continue with the program
-    Serial.println(WiFi.localIP());
-    // i2c config
-    Wire.begin(0,2);
-    // webSocket config
-    webSocket.begin();
-    webSocket.onEvent(webSocketEvent);
-  }
-  */
+  SmartWifi smartWifi(0, 4096, true, webServer);
+  smartWifi.connectToWifi();
+  // Every things is good, continue with the program
+  // i2c config
+  Wire.begin(0,2);
+  // webSocket config
+  webSocket.begin();
+  webSocket.onEvent(webSocketEvent);
 }
 
 void loop() {
