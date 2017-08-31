@@ -52,15 +52,17 @@ class SmartWifi{
     SmartWifi(int startAddress,int eepromSize,bool useSerial,ESP8266WebServer& webServer);
     SmartWifi(bool useSerial, int eepromSize,ESP8266WebServer& webServer);
     void setMaxNumberOfConnectionTries(int numberOfTries);
-    void connectToWifi();
+    void connectToWifi(void);
     IPAddress getIPAddress(void);
 
 };
+
 SmartWifi::SmartWifi(bool useSerial, int eepromSize, ESP8266WebServer& webServer):_useSerial(useSerial),_eepromSize(eepromSize),_webServer(webServer){
   _maxNumberOfTries = 20;
   _startAddress = 0;
   loadCredentiasFromEEPROM();
 }
+
 SmartWifi::SmartWifi(int startAddress,int eepromSize, bool useSerial, ESP8266WebServer& webServer):_useSerial(useSerial), _startAddress(startAddress), _eepromSize(eepromSize),_webServer(webServer){
   _maxNumberOfTries = 20;
   loadCredentiasFromEEPROM();
@@ -134,7 +136,7 @@ void SmartWifi::accessPointAndPasswordForm(void){
   _webServer.send(200,"text/html",site);
 }
 
-bool SmartWifi::connectToWifi(void){
+void SmartWifi::connectToWifi(void){
   WiFi.mode(WIFI_STA);
   WiFi.begin(_ssid,_password);
   //Tring to connect to the wifi
@@ -214,6 +216,34 @@ void SmartWifi::resetESPHandler(void){
 
 IPAddress SmartWifi::getIPAddress(void){
   return WiFi.localIP();
+}
+
+class Input{
+	private:
+		char _inputAddress;
+		float _offset;
+		float _gradient;
+		char _unit[2];
+	public:
+		Input(char inputAddress);//Use the default pins
+		char getAddress(void);
+		//void calcParametes(
+};
+//Input::Input(char inputAddress) : _inputAddress(inputAddress){}
+
+class I2CChip{
+	private:
+		char _chipAddress;
+//		byte _numberOfInputs;
+		
+		Input _inputArr[];
+	public:
+		I2CChip(char chipAddress,byte numberOfInputs);//Use the default pins
+		I2CChip(char chipAddress,byte numberOfInputs,int SDA, int SCL);
+};
+
+I2CChip::I2CChip(char chipAddress,byte numberOfInputs) : _chipAddress(chipAddress){
+
 }
 
 uint8_t lastConnection;
