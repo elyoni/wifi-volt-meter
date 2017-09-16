@@ -16,6 +16,7 @@ function addToTable(numberOfAnalog,dmmNumber) {
 		var br = document.createElement("BR");
 		x.setAttribute('id',dmmNumber.toString() + "A" + i.toString());
 		x.setAttribute('type',"text");
+		x.setAttribute('class',"inset-text-effect");
 		x.setAttribute('value',"0");
 		x.setAttribute('readOnly',true);
 		console.log(dmmNumber.toString() + "A" + i.toString());
