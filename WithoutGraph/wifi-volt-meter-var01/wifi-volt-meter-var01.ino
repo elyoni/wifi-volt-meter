@@ -245,6 +245,7 @@ class I2CChip{
         void chipAddressConfigure();
         void inputAddressConfigure(){
         // EEPROM
+        //TODO I need to create EEPROM functions that will start taking the data from the open where the wifi settings ends
         void saveCredentialsToEEPROM(void);
         void clearCredentiasFromEEPROM(void);
         void loadCredentiasFromEEPROM(void);
@@ -263,6 +264,7 @@ I2CChip::I2CChip(char chipAddress,byte numberOfInputs,int SDA, int SCL, ESP8266W
 
 
 void I2CChip::saveCredentialsToEEPROM(void){
+
     /*
     char ok[3] = "OK";
     EEPROM.begin(_eepromSize);
@@ -409,10 +411,17 @@ int readI2C(int addressBus,byte controlReg){
 
 void setup() {
     Serial.begin(115200);
+
+    //Take the data from the EEPROM and connecting to the wifi
     SmartWifi smartWifi(0, 4096, true, webServer);
     smartWifi.connectToWifi();
     // Every things is good, continue with the program
+    //TODO Need to create the class I2CChip With the falowing phase
+    //  1. Get the data from the eeprom
+    //  2. Configure the wires of the I2C
+    //
     // i2c config
+    //
     Wire.begin(0,2);
     // webSocket config
     webSocket.begin();
